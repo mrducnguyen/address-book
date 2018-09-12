@@ -1,6 +1,5 @@
 package au.com.reecetech.addressbook.models;
 
-import au.com.reecetech.addressbook.enums.PhoneType;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import org.testng.annotations.Test;
@@ -34,14 +33,6 @@ public class PhoneTest {
     }
 
     @Test
-    public void samePhoneNumberShouldBeDecteded() throws NumberParseException {
-        Phone phone1 = new Phone(PHONE_NUMBER_MOBILE);
-        Phone phone2 = new Phone(PHONE_NUMBER_MOBILE_SAME);
-
-        assertThat(PHONE_NUMBER_MOBILE + " should be same as " + PHONE_NUMBER_MOBILE_SAME, phone1.isPhoneNumberSame(phone2));
-    }
-
-    @Test
     public void invalidPhoneShouldThrowExceptions() {
         try {
             new Phone("");
@@ -72,5 +63,20 @@ public class PhoneTest {
         } catch (NumberParseException e) {
             assertThat(e.getErrorType(), is(NumberParseException.ErrorType.TOO_LONG));
         }
+    }
+
+    @Test
+    public void phoneEqualsDetection() throws NumberParseException {
+        Phone phone1 = new Phone(PHONE_NUMBER_MOBILE);
+        Phone phone2 = new Phone(PHONE_NUMBER_MOBILE_SAME);
+        Phone phone3 = new Phone(PHONE_NUMBER_LANDLINE);
+
+        assertThat("Phone equals object", phone1.equals(phone2));
+        assertThat("Phone should not equal object", !phone1.equals(phone3));
+        assertThat("Phone equals string '" + PHONE_NUMBER_MOBILE + "' should be true", phone1.equals(PHONE_NUMBER_MOBILE));
+        assertThat("Phone equals string '" + PHONE_NUMBER_MOBILE_SAME + "'should be true", phone1.equals(PHONE_NUMBER_MOBILE_SAME));
+        assertThat("Phone should not equal string '"+ PHONE_NUMBER_LANDLINE + "'", !phone1.equals(PHONE_NUMBER_LANDLINE));
+        assertThat("Phone should not equal null", !phone1.equals(null));
+        assertThat("Invalid phone should not equal", !phone1.equals(PHONE_NUMBER_NOT_NUMBER));
     }
 }

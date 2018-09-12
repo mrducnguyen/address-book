@@ -45,8 +45,30 @@ public class Phone {
         return this.toString().equals(other.toString());
     }
 
+    public boolean isPhoneNumberSame(String number) {
+        try {
+            Phone phone = new Phone(number);
+            return this.isPhoneNumberSame(phone);
+        } catch (NumberParseException e) {
+            // we should log the exception for debugging purpose
+            // there is no logging configured at the moment
+            // so this catch block was left empty
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return this.getNumber(DEFAULT_FORMAT);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Phone) {
+            return this.isPhoneNumberSame((Phone)other);
+        } else if (other instanceof String) {
+            return this.isPhoneNumberSame(other.toString());
+        }
+        return false;
     }
 }
