@@ -1,9 +1,10 @@
-package au.com.reecetech.addressbook.model;
+package au.com.reecetech.addressbook.models;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+
+import au.com.reecetech.addressbook.models.AddressBook;
 
 public class User {
     private String username;
@@ -13,6 +14,7 @@ public class User {
 
     public User(String username) {
         this.username = username;
+        this.addressBooks = new HashMap<>();
     }
 
     public String getUsername() {
@@ -33,10 +35,11 @@ public class User {
      * @param name  - The address book's name, should be unique
      * @return a new {@link AddressBook}, or the existing instance
      */
-    public final Function<String, AddressBook> newAddressBook() {
-        return name -> this.addressBooks.containsKey(name)
-                ? this.addressBooks.get(name)
-                : this.addressBooks.put(name, new AddressBook(name));
+    public final AddressBook newAddressBook(String name) {
+        if (!this.addressBooks.containsKey(name)) {
+            this.addressBooks.put(name, new AddressBook(name));
+        }
+        return this.addressBooks.get(name);
     }
 
     /**

@@ -1,7 +1,7 @@
 package au.com.reecetech.addressbook.store;
 
-import au.com.reecetech.addressbook.model.AddressBook;
-import au.com.reecetech.addressbook.model.User;
+import au.com.reecetech.addressbook.models.AddressBook;
+import au.com.reecetech.addressbook.models.User;
 
 import java.util.Collection;
 

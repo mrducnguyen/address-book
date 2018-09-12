@@ -1,4 +1,4 @@
-package au.com.reecetech.addressbook.model;
+package au.com.reecetech.addressbook.models;
 
 import au.com.reecetech.addressbook.enums.PhoneType;
 
