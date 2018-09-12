@@ -2,15 +2,22 @@ package au.com.reecetech.addressbook.models;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import au.com.reecetech.addressbook.models.AddressBook;
+import net.sf.oval.constraint.MinLength;
+import net.sf.oval.constraint.NotEmpty;
+import net.sf.oval.constraint.NotNull;
 
 public class User {
+
+    @NotNull
+    @NotEmpty
+    @MinLength(value = 5)
     private String username;
     private Map<String, AddressBook> addressBooks;
-
-    public User() {}
+    private List<Contact> contacts;
 
     public User(String username) {
         this.username = username;

@@ -1,51 +1,6 @@
-group 'au.com.reecetech'
-version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-apply plugin: 'idea'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testCompile group: 'org.testng', name: 'testng', version: '6.14.3'
-}
+    compile group: 'net.sf.oval', name: 'oval', version: '1.90'
+    compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.9.+'
 
-test {
-    // enable TestNG support (default is JUnit)
-    useTestNG()
-    // enable JUnit Platform (a.k.a. JUnit 5) support
-    useJUnitPlatform()
-
-    // set a system property for the test JVM(s)
-    systemProperty 'some.prop', 'value'
-
-    // explicitly include or exclude tests
-    include 'au/com/reecetech/addressbook/**'
-
-    // show standard out and standard error of the test JVM(s) on the console
-    testLogging.showStandardStreams = true
-
-    // set heap size for the test JVM(s)
-    minHeapSize = "128m"
-    maxHeapSize = "512m"
-
-    // set JVM arguments for the test JVM(s)
-    jvmArgs '-XX:MaxPermSize=256m'
-
-    // listen to events in the test execution lifecycle
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
-    // Fail the 'test' task on the first test failure
-    failFast = true
-
-    // listen to standard out and standard error of the test JVM(s)
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
-    }
+    testCompile group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
 }

@@ -1,15 +1,23 @@
 package au.com.reecetech.addressbook.models;
 
-import java.util.List;
+import net.sf.oval.constraint.MinLength;
+import net.sf.oval.constraint.NotEmpty;
+import net.sf.oval.constraint.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class AddressBook {
-    private String name;
-    private List<Contact> contacts;
 
-    public AddressBook() {}
+    @NotNull
+    @NotEmpty
+    @MinLength(value = 5)
+    private String name;
+    private Set<Contact> contacts;
 
     public AddressBook(String name) {
         this.name = name;
+        this.contacts = new HashSet<>();
     }
 
     public String getName() {
@@ -20,11 +28,11 @@ public class AddressBook {
         this.name = name;
     }
 
-    public List<Contact> getContacts() {
+    public Set<Contact> getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<Contact> contacts) {
+    public void setContacts(Set<Contact> contacts) {
         this.contacts = contacts;
     }
 

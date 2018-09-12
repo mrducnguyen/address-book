@@ -1,11 +1,24 @@
 package au.com.reecetech.addressbook.models;
 
+import net.sf.oval.constraint.MinLength;
+import net.sf.oval.constraint.NotEmpty;
+import net.sf.oval.constraint.NotNull;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Contact {
-    private long id;
+
+    @NotNull
+    @NotEmpty
+    @MinLength(value = 5)
     private String name;
     private List<Phone> phones;
+
+    public Contact(String name) {
+        this.name = name;
+        this.phones = new ArrayList<>();
+    }
 
     public String getName() {
         return name;
@@ -21,5 +34,13 @@ public class Contact {
 
     public void setPhones(List<Phone> phones) {
         this.phones = phones;
+    }
+
+    public void addPhone(Phone phone) {
+        this.phones.add(phone);
+    }
+
+    public boolean hasPhone(Phone phone) {
+        return this.phones.contains(phone);
     }
 }

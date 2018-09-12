@@ -1,2 +1,3 @@
 rootProject.name = 'address-book-task'
 
+include 'core'

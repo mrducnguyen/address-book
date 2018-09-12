@@ -1,0 +1,33 @@
+group 'au.com.reecetech'
+version '1.0-SNAPSHOT'
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: "jacoco"
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        testCompile group: 'org.testng', name: 'testng', version: '6.14.+'
+    }
+
+    jacoco {
+        toolVersion = "0.8.1"
+        reportsDir = file("$buildDir/jacoco")
+    }
+
+    test {
+        useTestNG()
+
+        failFast = true
+
+        // listen to events in the test execution lifecycle
+        beforeTest { descriptor ->
+            logger.lifecycle("Running test: " + descriptor)
+        }
+    }
+}
