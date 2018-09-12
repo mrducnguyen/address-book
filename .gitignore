@@ -2,5 +2,6 @@
 .gradle
 .settings
 .project
+.settings
 .idea
 bin
