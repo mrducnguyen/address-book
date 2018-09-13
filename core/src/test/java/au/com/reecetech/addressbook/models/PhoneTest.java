@@ -4,6 +4,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import org.junit.jupiter.api.Test;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -65,9 +66,12 @@ public class PhoneTest extends AbstractModelTest {
 
         assertThat("Phone equals object", phone1.equals(phone2));
         assertThat("Phone should not equal object", !phone1.equals(phone3));
-        assertThat("Phone equals string '" + PHONE_NUMBER_MOBILE + "' should be true", phone1.equals(PHONE_NUMBER_MOBILE));
-        assertThat("Phone equals string '" + PHONE_NUMBER_MOBILE_SAME + "'should be true", phone1.equals(PHONE_NUMBER_MOBILE_SAME));
-        assertThat("Phone should not equal string '"+ PHONE_NUMBER_LANDLINE + "'", !phone1.equals(PHONE_NUMBER_LANDLINE));
+        assertThat(format("Phone equals string '%s' should be true", PHONE_NUMBER_MOBILE),
+            phone1.equals(PHONE_NUMBER_MOBILE));
+        assertThat(format("Phone equals string '%s'should be true", PHONE_NUMBER_MOBILE_SAME),
+            phone1.equals(PHONE_NUMBER_MOBILE_SAME));
+        assertThat(format("Phone should not equal string '%s'", PHONE_NUMBER_LANDLINE),
+            !phone1.equals(PHONE_NUMBER_LANDLINE));
         assertThat("Phone should not equal null", !phone1.equals(null));
         assertThat("Invalid phone should not equal", !phone1.equals(PHONE_NUMBER_NOT_NUMBER));
     }

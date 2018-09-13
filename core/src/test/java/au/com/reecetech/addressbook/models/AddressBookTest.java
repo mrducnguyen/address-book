@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AddressBookTest extends AbstractModelTest {
@@ -48,7 +49,7 @@ public class AddressBookTest extends AbstractModelTest {
         Contact dupContact2 = getContact2Duplicate();
         assertThat("Contact should be flagged as similar", book.hasSimilarContact(dupContact2));
 
-        Contact noDupContact = new Contact(CONTACT_NAME_1 + System.currentTimeMillis());
+        Contact noDupContact = new Contact(format("%s-%d", CONTACT_NAME_1, System.currentTimeMillis()));
         assertThat("Contact should not be similar", !book.hasSimilarContact(noDupContact));
     }
 
@@ -57,10 +58,11 @@ public class AddressBookTest extends AbstractModelTest {
         AddressBook book = getAddressBookWith2DifferentContacts();
 
         List<Contact> list = book.findContactByName(CONTACT_NAME_1);
-        assertThat("Contact '" + CONTACT_NAME_1 + "' should be found", list.size() > 0);
+        assertThat(format("Contact '%s' should be found", CONTACT_NAME_1), list.size() > 0);
 
         list = book.findContactByName(CONTACT_NAME_1.substring(3), true);
-        assertThat("Partial name should be found in lenient search", list.size() > 0);
+        assertThat(format("Partial name '%s' should be found in lenient search", CONTACT_NAME_1.substring(3)),
+            list.size() > 0);
     }
 
     @Test
@@ -90,34 +92,13 @@ public class AddressBookTest extends AbstractModelTest {
         book1.mergeContacts(book2);
 
         assertThat("Book 1 should have 4 contacts", book1.getContacts().size() == 4);
-        assertThat("Contact '" + CONTACT_NAME_1 + "' should be existed",
+        assertThat(format("Contact '%s' should be existed", CONTACT_NAME_1),
             book1.findContactByName(CONTACT_NAME_1).size() == 1);
-        assertThat("Contact '" + CONTACT_NAME_2 + "' should be existed",
+        assertThat(format("Contact '%s' should be existed", CONTACT_NAME_2),
             book1.findContactByName(CONTACT_NAME_2).size() == 1);
-        assertThat("Contact '" + CONTACT_NAME_3 + "' should be existed",
+        assertThat(format("Contact '%s' should be existed", CONTACT_NAME_3),
             book1.findContactByName(CONTACT_NAME_3).size() == 1);
-        assertThat("Contact '" +CONTACT_NAME_4 + "' should be existed",
+        assertThat(format("Contact '%s' should be existed", CONTACT_NAME_4),
             book1.findContactByName(CONTACT_NAME_4).size() == 1);
-    }
-
-    @Test
-    public void potentialDuplicatesShouldBeDetected() {
-        AddressBook book1 = getAddressBookWith2DifferentContacts();
-
-        List<Contact> duplicates = book1.potentialDuplicates();
-        assertThat("No duplicate should be found", duplicates.size() == 0);
-
-        Contact contact1 = book1.getContacts().get(0);
-        Contact contact2 = getContact1Duplicate();
-        Contact contact3 = getContact1Duplicate2();
-        book1.addContact(contact2);
-        book1.addContact(contact3);
-
-        duplicates = book1.potentialDuplicates();
-
-        assertThat("3 duplicates out of 4 should be found, found only: " + duplicates.size(), duplicates.size() == 3);
-        assertThat("Contact 1 should be found in duplicates list", duplicates.contains(contact1));
-        assertThat("Contact 2 should be found in duplicates list", duplicates.contains(contact2));
-        assertThat("Contact 3 should be found in duplicates list", duplicates.contains(contact3));
     }
 }

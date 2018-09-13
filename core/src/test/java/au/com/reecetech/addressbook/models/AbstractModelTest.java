@@ -3,6 +3,7 @@ package au.com.reecetech.addressbook.models;
 import com.google.i18n.phonenumbers.NumberParseException;
 
 public abstract class AbstractModelTest {
+    protected static final String USER_NAME = "Mr Obi-Wan Kenobi";
     protected static final String BOOK_NAME_1 = "Business";
     protected static final String BOOK_NAME_2 = "Personal";
     protected static final String CONTACT_NAME_1 = "Mr. Chewie";

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -60,8 +61,8 @@ public class ContactTest extends AbstractModelTest {
         contact.addPhone(PHONE_NUMBER_4);
 
         contact.removePhone(PHONE_NUMBER_1);
-        assertThat("Phone '" + PHONE_NUMBER_1 + "' should be removed", !contact.hasPhone(PHONE_NUMBER_1));
-        assertThat("Phone '" + PHONE_NUMBER_2 + "' should still be there", contact.hasPhone(PHONE_NUMBER_2));
+        assertThat(format("Phone '%s' should be removed", PHONE_NUMBER_1), !contact.hasPhone(PHONE_NUMBER_1));
+        assertThat(format("Phone '%s' should still be there", PHONE_NUMBER_2), contact.hasPhone(PHONE_NUMBER_2));
     }
 
     @Test

@@ -1,11 +1,6 @@
 package au.com.reecetech.addressbook.models;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import au.com.reecetech.addressbook.models.AddressBook;
+import java.util.*;
 import net.sf.oval.constraint.MinLength;
 import net.sf.oval.constraint.NotEmpty;
 import net.sf.oval.constraint.NotNull;
@@ -36,6 +31,14 @@ public class User {
         return this.addressBooks.values();
     }
 
+    public AddressBook getAddressBook(String name) {
+        return this.addressBooks.get(name);
+    }
+
+    public void addAddressBook(AddressBook book) {
+        this.addressBooks.put(book.getName(), book);
+    }
+
     /**
      * Create an {@link AddressBook} with supplied <pre>name</pre>. If the address book is already existed, a reference to the
      * existed address book will be returned
@@ -57,5 +60,17 @@ public class User {
         if (this.addressBooks.containsKey(name)) {
             this.addressBooks.remove(name);
         }
+    }
+
+    public List<Contact> getCommonContactsInAllBooks() {
+        // MapReduce, natural parallel operations
+        // so parallelStream is used
+        return this.addressBooks.values().parallelStream()
+            .map(AddressBook::getContacts)
+            .reduce(new ArrayList<>(), (list1, list2) -> {
+                List<Contact> newList = new ArrayList<>(list1);
+                newList.retainAll(list2);
+                return newList;
+            });
     }
 }
