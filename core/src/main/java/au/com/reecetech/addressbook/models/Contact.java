@@ -75,8 +75,21 @@ public class Contact {
         // this is O(n^2), but in reality, a contact should have a small number of phones
         return this.name.equalsIgnoreCase(other.getName()) ||
             this.phones.stream()
-                .filter(phone ->
-                    other.getPhones().stream().filter(phone::equals).count() > 0)
-                .count() > 0;
+                .anyMatch(phone -> other.getPhones().stream().anyMatch(phone::equals));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // Contact should be considered equals when
+        //   - name is equals
+        //   - AND phones are all equals
+        if (obj instanceof Contact) {
+            Contact other = (Contact)obj;
+            if (this.name.equals(other.getName())) {
+                return other.getPhones().stream().allMatch(this.phones::contains);
+            }
+        }
+
+        return false;
     }
 }

@@ -38,13 +38,32 @@ public class AddressBook {
         this.contacts = contacts;
     }
 
+    public void addContact(Contact contact) {
+        this.contacts.add(contact);
+    }
+
+    public boolean hasContact(Contact contact) {
+        return this.contacts.contains(contact);
+    }
+
+    public boolean hasSimilarContact(Contact contact) {
+        return this.contacts.stream().filter(contact::isPotentialDuplicate).count() > 0;
+    }
+
     public void removeContact(Contact contact) {
         this.contacts.remove(contact);
     }
 
     public List<Contact> findContactByName(String name) {
+        return this.findContactByName(name, false);
+    }
+
+    public List<Contact> findContactByName(String name, boolean lenient) {
         return this.contacts.stream()
-            .filter(contact -> contact.getName().equals(name))
+            .filter(contact -> lenient
+                ? contact.getName().toUpperCase().contains(name.toUpperCase())
+                : contact.getName().equals(name)
+            )
             .collect(Collectors.toList());
     }
 
@@ -68,7 +87,8 @@ public class AddressBook {
                 this.contacts.stream()
                     .filter(otherContact -> !contact.equals(otherContact) && !duplicates.contains(otherContact))
                     .filter(contact::isPotentialDuplicate)
-                    .map(duplicateContact -> duplicates.add(duplicateContact));
+                    .map(duplicateContact -> duplicates.add(duplicateContact))
+                    .count(); // map is an intermediate operation and won't execute without a terminal statement
                 // we know that there is duplicates when the size of the list increase
                 // after the previous step
                 if (duplicates.size() > startSize) {

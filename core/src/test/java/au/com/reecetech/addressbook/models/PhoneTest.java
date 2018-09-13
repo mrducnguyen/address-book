@@ -2,20 +2,12 @@ package au.com.reecetech.addressbook.models;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class PhoneTest {
-
-    private static final String PHONE_NUMBER_MOBILE = "+61 400 555 666";
-    private static final String PHONE_NUMBER_MOBILE_SAME = "+61400555666";
-    private static final String PHONE_NUMBER_LANDLINE = "0366998888";
-    private static final String PHONE_NUMBER_NOT_NUMBER = "ABCDEFGHIJ";
-    private static final String PHONE_NUMBER_NOT_VALID_COUNTRY = "12";
-    private static final String PHONE_NUMBER_TOO_SHORT = "12345";
-    private static final String PHONE_NUMBER_TOO_LONG = "1234567896546897";
+public class PhoneTest extends AbstractModelTest {
 
     @Test
     public void mobilePhoneShouldBeSetCorrectly() throws NumberParseException {
