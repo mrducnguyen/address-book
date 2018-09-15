@@ -1,13 +1,38 @@
 package au.com.reecetech.addressbook.models;
 
+import au.com.reecetech.addressbook.AbstractTest;
+import net.sf.oval.ConstraintViolation;
+import net.sf.oval.Validator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AddressBookTest extends AbstractModelTest {
+public class AddressBookTest extends AbstractTest {
+
+    @Test
+    public void nullNameShouldBeThrown() {
+        assertThrows(NullPointerException.class, () -> new AddressBook(null));
+
+        assertThrows(NullPointerException.class, () -> new AddressBook(BOOK_NAME_1).setName(null));
+    }
+
+    @Test
+    public void emptyNameShouldBeInvalid() {
+        Validator validator = new Validator();
+
+        AddressBook empty2 = new AddressBook("");
+        List<ConstraintViolation> errorList = validator.validate(empty2);
+
+        assertThat(errorList.size(), greaterThan(0));
+        ConstraintViolation violation = errorList.get(0);
+        assertThat(violation.getMessage(), containsString("cannot be empty"));
+    }
 
     @Test
     public void addressBookShouldHoldContact() {

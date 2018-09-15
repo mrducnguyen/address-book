@@ -1,45 +1,31 @@
 package au.com.reecetech.addressbook.models;
 
 import com.google.i18n.phonenumbers.NumberParseException;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import net.sf.oval.constraint.MinLength;
 import net.sf.oval.constraint.NotEmpty;
-import net.sf.oval.constraint.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class Contact {
 
-    @NotNull
     @NotEmpty
     @MinLength(value = 5)
-    private String name;
-    private List<Phone> phones;
+    @NonNull
+    @Getter @Setter private String name;
 
-    public Contact(String name) {
+    @Getter @Setter private List<Phone> phones;
+
+    public Contact(@NonNull String name) {
         this.name = name;
         this.phones = new ArrayList<>();
     }
 
     private Phone getPhone(String number) {
         return this.phones.stream().filter(phone -> phone.equals(number)).findFirst().orElse(null);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Phone> getPhones() {
-        return phones;
-    }
-
-    public void setPhones(List<Phone> phones) {
-        this.phones = phones;
     }
 
     public void addPhone(Phone phone) {
@@ -80,7 +66,7 @@ public class Contact {
 
     @Override
     public boolean equals(Object obj) {
-        // Contact should be considered equals when
+        // Contact should be considered equals when. Is this a good design?!!
         //   - name is equals
         //   - AND phones are all equals
         if (obj instanceof Contact) {

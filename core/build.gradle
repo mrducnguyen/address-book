@@ -1,14 +1,5 @@
 dependencies {
     compile group: 'net.sf.oval', name: 'oval', version: '1.90'
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.9.+'
-
-    testCompile group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
 }
 
-test {
-    jacoco {
-        append = false
-        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
-        classDumpDir = file("$buildDir/jacoco/classpathdumps")
-    }
-}

@@ -1,8 +1,10 @@
-package au.com.reecetech.addressbook.models;
+package au.com.reecetech.addressbook;
 
+import au.com.reecetech.addressbook.models.AddressBook;
+import au.com.reecetech.addressbook.models.Contact;
 import com.google.i18n.phonenumbers.NumberParseException;
 
-public abstract class AbstractModelTest {
+public abstract class AbstractTest {
     protected static final String USER_NAME = "Mr Obi-Wan Kenobi";
     protected static final String BOOK_NAME_1 = "Business";
     protected static final String BOOK_NAME_2 = "Personal";
@@ -14,13 +16,20 @@ public abstract class AbstractModelTest {
     protected static final String PHONE_NUMBER_2 = "0366665555";
     protected static final String PHONE_NUMBER_3 = "0366667777";
     protected static final String PHONE_NUMBER_4 = "0366669999";
+    protected static final String PHONE_NUMBER_INVALID = "0311225";
     protected static final String PHONE_NUMBER_MOBILE = "+61 400 555 666";
     protected static final String PHONE_NUMBER_MOBILE_SAME = "+61400555666";
     protected static final String PHONE_NUMBER_LANDLINE = "0366998888";
     protected static final String PHONE_NUMBER_NOT_NUMBER = "ABCDEFGHIJ";
-    protected static final String PHONE_NUMBER_NOT_VALID_COUNTRY = "12";
-    protected static final String PHONE_NUMBER_TOO_SHORT = "12345";
-    protected static final String PHONE_NUMBER_TOO_LONG = "1234567896546897";
+    protected static final String PHONE_NUMBER_TOO_SHORT = "1";
+    protected static String PHONE_NUMBER_TOO_LONG = "";
+
+    static {
+        // generate a string of 255 in length
+        for (int i = 0; i <= 255; i++) {
+            PHONE_NUMBER_TOO_LONG += Math.floor(Math.random()*10); // 0 - 9
+        }
+    }
 
     public Contact getContact1() {
         Contact contact = new Contact(CONTACT_NAME_1);

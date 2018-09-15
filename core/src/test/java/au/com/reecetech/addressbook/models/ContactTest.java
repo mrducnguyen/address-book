@@ -1,5 +1,6 @@
 package au.com.reecetech.addressbook.models;
 
+import au.com.reecetech.addressbook.AbstractTest;
 import com.google.i18n.phonenumbers.NumberParseException;
 import net.sf.oval.ConstraintViolation;
 import net.sf.oval.Validator;
@@ -10,25 +11,26 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContactTest extends AbstractModelTest {
+public class ContactTest extends AbstractTest {
 
     @Test
-    public void emptyContactNameShouldBeInvalid() {
+    public void nullNameShouldBeThrown() {
+        assertThrows(NullPointerException.class, () -> new Contact(null));
+
+        assertThrows(NullPointerException.class, () -> new Contact(CONTACT_NAME_1).setName(null));
+    }
+
+    @Test
+    public void emptyNameShouldBeInvalid() {
         Validator validator = new Validator();
 
-        Contact empty1 = new Contact(null);
-        List<ConstraintViolation> errorList = validator.validate(empty1);
+        Contact empty2 = new Contact("");
+        List<ConstraintViolation> errorList = validator.validate(empty2);
 
         assertThat(errorList.size(), greaterThan(0));
         ConstraintViolation violation = errorList.get(0);
-        assertThat(violation.getMessage(), containsString("cannot be null"));
-
-        Contact empty2 = new Contact("");
-        errorList = validator.validate(empty2);
-
-        assertThat(errorList.size(), greaterThan(0));
-        violation = errorList.get(0);
         assertThat(violation.getMessage(), containsString("cannot be empty"));
     }
 

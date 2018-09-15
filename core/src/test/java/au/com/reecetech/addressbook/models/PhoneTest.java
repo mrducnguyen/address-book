@@ -1,5 +1,6 @@
 package au.com.reecetech.addressbook.models;
 
+import au.com.reecetech.addressbook.AbstractTest;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import org.junit.jupiter.api.Test;
@@ -7,8 +8,16 @@ import org.junit.jupiter.api.Test;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PhoneTest extends AbstractModelTest {
+public class PhoneTest extends AbstractTest {
+
+    @Test
+    public void nullNumberShouldBeThrown() {
+        assertThrows(NullPointerException.class, () -> new Phone(null));
+
+        assertThrows(NullPointerException.class, () -> new Phone(PHONE_NUMBER_1).setNumber(null));
+    }
 
     @Test
     public void mobilePhoneShouldBeSetCorrectly() throws NumberParseException {
@@ -26,36 +35,11 @@ public class PhoneTest extends AbstractModelTest {
     }
 
     @Test
-    public void invalidPhoneShouldThrowExceptions() {
-        try {
-            new Phone("");
-        } catch (NumberParseException e) {
-            assertThat(e.getErrorType(), is(NumberParseException.ErrorType.NOT_A_NUMBER));
-        }
-
-        try {
-            new Phone(PHONE_NUMBER_NOT_NUMBER);
-        } catch (NumberParseException e) {
-            assertThat(e.getErrorType(), is(NumberParseException.ErrorType.NOT_A_NUMBER));
-        }
-
-        try {
-            new Phone(PHONE_NUMBER_NOT_VALID_COUNTRY);
-        } catch (NumberParseException e) {
-            assertThat(e.getErrorType(), is(NumberParseException.ErrorType.INVALID_COUNTRY_CODE));
-        }
-
-        try {
-            new Phone(PHONE_NUMBER_TOO_SHORT);
-        } catch (NumberParseException e) {
-            assertThat(e.getErrorType(), is(NumberParseException.ErrorType.TOO_SHORT_AFTER_IDD));
-        }
-
-        try {
-            new Phone(PHONE_NUMBER_TOO_LONG);
-        } catch (NumberParseException e) {
-            assertThat(e.getErrorType(), is(NumberParseException.ErrorType.TOO_LONG));
-        }
+    public void invalidPhoneShouldThrowExceptions() throws NumberParseException {
+        assertThrows(NumberParseException.class, () -> new Phone(""));
+        assertThrows(NumberParseException.class, () -> new Phone(PHONE_NUMBER_NOT_NUMBER));
+        assertThrows(NumberParseException.class, () -> new Phone(PHONE_NUMBER_TOO_SHORT));
+        assertThrows(NumberParseException.class, () -> new Phone(PHONE_NUMBER_TOO_LONG));
     }
 
     @Test

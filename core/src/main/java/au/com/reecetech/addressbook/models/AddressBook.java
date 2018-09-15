@@ -1,5 +1,8 @@
 package au.com.reecetech.addressbook.models;
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import net.sf.oval.constraint.MinLength;
 import net.sf.oval.constraint.NotEmpty;
 import net.sf.oval.constraint.NotNull;
@@ -11,31 +14,16 @@ import java.util.stream.Stream;
 
 public class AddressBook {
 
-    @NotNull
     @NotEmpty
     @MinLength(value = 5)
-    private String name;
-    private List<Contact> contacts;
+    @NonNull
+    @Getter @Setter private String name;
 
-    public AddressBook(String name) {
+    @Getter @Setter private List<Contact> contacts;
+
+    public AddressBook(@NonNull String name) {
         this.name = name;
         this.contacts = new ArrayList<>();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
     }
 
     public void addContact(Contact contact) {

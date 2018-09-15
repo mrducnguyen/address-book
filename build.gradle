@@ -3,7 +3,7 @@ version '1.0-SNAPSHOT'
 
 allprojects {
     apply plugin: 'java'
-    apply plugin: "jacoco"
+    apply plugin: 'jacoco'
 
     sourceCompatibility = 1.8
 
@@ -12,7 +12,10 @@ allprojects {
     }
 
     dependencies {
-        //testCompile group: 'org.testng', name: 'testng', version: '6.14.+'
+        compileOnly 'org.projectlombok:lombok:1.18.2'
+
+        testCompile 'org.hamcrest:java-hamcrest:2.0.0.0'
+
         testImplementation(
             'org.junit.jupiter:junit-jupiter-api:5.3.+'
         )
@@ -34,6 +37,12 @@ allprojects {
         // listen to events in the test execution lifecycle
         beforeTest { descriptor ->
             logger.lifecycle("Running test: " + descriptor)
+        }
+
+        jacoco {
+            append = false
+            destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+            classDumpDir = file("$buildDir/jacoco/classpathdumps")
         }
     }
 }

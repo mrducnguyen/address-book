@@ -9,6 +9,4 @@ public interface IUserStorage {
 
     User getOrCreateUser(String username);
     Collection<AddressBook> getAllAddressBooks(String username);
-    AddressBook getOrCreateAddressBook(String username, String name);
-
 }

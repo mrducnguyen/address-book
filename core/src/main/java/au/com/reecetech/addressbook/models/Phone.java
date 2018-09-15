@@ -4,8 +4,8 @@ import au.com.reecetech.addressbook.validations.PhoneNumber;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import lombok.NonNull;
 import net.sf.oval.constraint.NotEmpty;
-import net.sf.oval.constraint.NotNull;
 
 public class Phone {
 
@@ -13,14 +13,13 @@ public class Phone {
     private static final PhoneNumberUtil PHONE_UTIL = PhoneNumberUtil.getInstance();
     private static final PhoneNumberUtil.PhoneNumberFormat DEFAULT_FORMAT = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
 
-    @NotNull
     @NotEmpty
     @PhoneNumber
     private Phonenumber.PhoneNumber number;
 
     private PhoneNumberUtil.PhoneNumberType type;
 
-    public Phone(String number) throws NumberParseException {
+    public Phone(@NonNull String number) throws NumberParseException {
         this.setNumber(number);
     }
 
@@ -28,7 +27,7 @@ public class Phone {
         return PHONE_UTIL.format(this.number, format);
     }
 
-    public void setNumber(String number) throws NumberParseException {
+    public void setNumber(@NonNull String number) throws NumberParseException {
         this.number = PHONE_UTIL.parseAndKeepRawInput(number, DEFAULT_COUNTRY_CODE);
         this.type = PHONE_UTIL.getNumberType(this.number);
     }
