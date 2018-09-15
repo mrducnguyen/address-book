@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class AddressBookTest extends AbstractTest {
 
     @Test
-    public void nullNameShouldBeThrown() {
+    public void nullArgumentsShouldBeThrown() {
         assertThrows(NullPointerException.class, () -> new AddressBook(null));
 
         assertThrows(NullPointerException.class, () -> new AddressBook(BOOK_NAME_1).setName(null));
@@ -80,6 +80,10 @@ public class AddressBookTest extends AbstractTest {
 
     @Test
     public void findContactByNameShouldWork() {
+        assertThrows(NullPointerException.class, () -> new AddressBook(BOOK_NAME_1).findContactByName(null));
+
+        assertThrows(NullPointerException.class, () -> new AddressBook(BOOK_NAME_1).findContactByName(null, true));
+
         AddressBook book = getAddressBookWith2DifferentContacts();
 
         List<Contact> list = book.findContactByName(CONTACT_NAME_1);

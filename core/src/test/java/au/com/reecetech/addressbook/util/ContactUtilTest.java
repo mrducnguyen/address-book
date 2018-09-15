@@ -5,6 +5,8 @@ import au.com.reecetech.addressbook.models.AddressBook;
 import au.com.reecetech.addressbook.models.Contact;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,7 +38,16 @@ public class ContactUtilTest extends AbstractTest {
 
     @Test
     public void commonContactsEmptyArgumentShouldThrowError() {
-        assertThrows(AssertionError.class, () -> ContactUtil.commonContacts());
+        assertThrows(NullPointerException.class, () -> ContactUtil.commonContacts(null));
+        assertThrows(AssertionError.class, () -> ContactUtil.commonContacts(new ArrayList<>()));
+    }
+
+    @Test
+    public void commonContactsSingleListShouldReturnTheList() {
+        AddressBook book1 = getAddressBookWith2DifferentContacts();
+        List<Contact> common = ContactUtil.commonContacts(Arrays.asList(book1));
+        assertThat("Common contacts should have 2 entries", common.size() == 2);
+        assertThat("Common contacts should have 2 exactly from book 1", common.stream().allMatch(book1::hasContact));
     }
 
     @Test
@@ -49,7 +60,9 @@ public class ContactUtilTest extends AbstractTest {
         Contact contact3 = new Contact(CONTACT_NAME_3);
         Contact contact4 = new Contact(CONTACT_NAME_4);
 
-        Stream.of(book1, book2, book3, book4).forEach(book -> {
+        List<AddressBook> books = Arrays.asList(book1, book2, book3, book4);
+
+        books.forEach(book -> {
             book.addContact(getContact1());
             book.addContact(getContact2());
         });
@@ -59,15 +72,15 @@ public class ContactUtilTest extends AbstractTest {
             book.addContact(contact4);
         });
 
-        assertThat("No common contact", ContactUtil.commonContacts(book1, new AddressBook("RANDOM")).size() == 0);
+        assertThat("No common contact", ContactUtil.commonContacts(Arrays.asList(book1, new AddressBook("RANDOM"))).size() == 0);
 
-        List<Contact> commonContacts = ContactUtil.commonContacts(book1, book2, book3, book4);
+        List<Contact> commonContacts = ContactUtil.commonContacts(books);
 
         assertThat("There are 2 common contacts", commonContacts.size() == 2);
         assertThat("Contact 1 should be in the common contacts", commonContacts.contains(getContact1()));
         assertThat("Contact 2 should be in the common contacts", commonContacts.contains(getContact2()));
 
-        commonContacts = ContactUtil.commonContacts(book3, book4);
+        commonContacts = ContactUtil.commonContacts(Arrays.asList(book3, book4));
 
         assertThat("There are 4 common contacts", commonContacts.size() == 4);
         assertThat("Contact 1 should be in the common contacts", commonContacts.contains(getContact1()));

@@ -1,5 +1,6 @@
 package au.com.reecetech.addressbook.models;
 
+import au.com.reecetech.addressbook.util.ContactUtil;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -42,11 +43,11 @@ public class AddressBook {
         this.contacts.remove(contact);
     }
 
-    public List<Contact> findContactByName(String name) {
+    public List<Contact> findContactByName(@NonNull String name) {
         return this.findContactByName(name, false);
     }
 
-    public List<Contact> findContactByName(String name, boolean lenient) {
+    public List<Contact> findContactByName(@NonNull String name, boolean lenient) {
         return this.contacts.stream()
             .filter(contact -> lenient
                 ? contact.getName().toUpperCase().contains(name.toUpperCase())
@@ -56,9 +57,7 @@ public class AddressBook {
     }
 
     public List<Contact> intersectionContacts(AddressBook other) {
-        return this.contacts.stream()
-            .filter(other.getContacts()::contains)
-            .collect(Collectors.toList());
+        return ContactUtil.intersection(this.contacts, other.getContacts());
     }
 
     public void mergeContacts(AddressBook other) {

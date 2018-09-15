@@ -1,21 +1,104 @@
 package au.com.reecetech.addressbook.models;
 
 import au.com.reecetech.addressbook.AbstractTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserTest extends AbstractTest {
+
+    private User user;
+
+    @BeforeEach
+    public void createAUser() {
+        this.user = new User(USER_NAME);
+    }
 
     @Test
     public void nullNameShouldBeThrown() {
         assertThrows(NullPointerException.class, () -> new User(null));
 
         assertThrows(NullPointerException.class, () -> new User(USER_NAME).setUsername(null));
+    }
+
+    @Test
+    public void newContactShouldBeStored() {
+        user.newContact(CONTACT_NAME_1);
+        List<Contact> contacts = user.findContactByName(CONTACT_NAME_1);
+
+        assertThat("1 contact should be found", contacts.size() == 1);
+        assertThat(CONTACT_NAME_1, equalTo(contacts.get(0).getName()));
+
+        Contact contact1 = getContact1();
+        user.addContact(contact1);
+
+        assertThat("Contact 1 should be existed", user.hasContact(contact1));
+
+        contacts = user.findContactByName(CONTACT_NAME_1);
+        assertThat("2 contacts should be found", contacts.size() == 2);
+        assertThat(contacts, hasItem(contact1));
+    }
+
+    @Test
+    public void removeContactShouldWork() {
+        Contact contact1 = getContact1();
+        Contact contact2 = getContact2();
+
+        user.addContact(contact1);
+        user.addContact(contact2);
+
+        assertThat("Contact 1 should be there", user.hasContact(contact1));
+        assertThat("Contact 2 should be there", user.hasContact(contact2));
+
+        user.removeContact(contact1);
+
+        assertThat("Contact 1 should not be there", !user.hasContact(contact1));
+        assertThat("Contact 2 should still be there", user.hasContact(contact2));
+
+        user.newAddressBook(BOOK_NAME_1);
+        user.addContactToAddressBook(contact2, BOOK_NAME_1);
+
+        assertThat("Contact 2 should be in address book", user.getAddressBook(BOOK_NAME_1).hasContact(contact2));
+
+        user.removeContact(contact2);
+
+        assertThat("Contact 2 should be removed from user", !user.hasContact(contact2));
+        assertThat("Contact 2 should be removed from AddressBook 1", !user.getAddressBook(BOOK_NAME_1).hasContact(contact2));
+    }
+
+    @Test
+    public void addContactToAddressBookShouldThrowOnNull() {
+        Contact contact1 = getContact1();
+        assertThrows(NullPointerException.class, () -> user.addContactToAddressBook(null, ""));
+        assertThrows(NullPointerException.class, () -> user.addContactToAddressBook(contact1, null));
+    }
+
+    @Test
+    public void getAllContactsShouldWork() {
+        Contact contact1 = getContact1();
+        Contact contact2 = getContact2();
+
+        user.addContact(contact1);
+        user.addContact(contact2);
+        user.newAddressBook(BOOK_NAME_1);
+        user.addContactToAddressBook(contact1, BOOK_NAME_1);
+        user.addContactToAddressBook(contact2, BOOK_NAME_1);
+
+        user.addContactToAddressBook(contact2, BOOK_NAME_2);
+
+        assertThat("User should have 2 contact", user.getAllContacts().size() == 2);
+        assertThat("User should have 2 address books", user.getAllAddressBooks().size() == 2);
+        assertThat("User should have address book 1", user.getAddressBook(BOOK_NAME_1) != null);
+        assertThat("User should have address book 2", user.getAddressBook(BOOK_NAME_2) != null);
+        assertThat("Address book 1 should have 2 contacts", user.getAddressBook(BOOK_NAME_1).getContacts().size() == 2);
+        assertThat("Address book 2 should have 1 contact", user.getAddressBook(BOOK_NAME_2).getContacts().size() == 1);
     }
 
     @Test

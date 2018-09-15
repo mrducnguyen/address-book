@@ -1,3 +1,5 @@
 rootProject.name = 'address-book-task'
 
 include 'core'
+include 'console-app'
+

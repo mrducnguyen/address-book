@@ -1,7 +1,7 @@
-group 'au.com.reecetech'
-version '1.0-SNAPSHOT'
-
 allprojects {
+    group 'au.com.reecetech'
+    version '1.0-SNAPSHOT'
+
     apply plugin: 'java'
     apply plugin: 'jacoco'
 

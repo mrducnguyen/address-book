@@ -2,8 +2,10 @@ package au.com.reecetech.addressbook.util;
 
 import au.com.reecetech.addressbook.models.AddressBook;
 import au.com.reecetech.addressbook.models.Contact;
+import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,21 +38,23 @@ public class ContactUtil {
         return duplicates;
     }
 
-    public static List<Contact> commonContacts(AddressBook... books) {
+    public static List<Contact> intersection(List<Contact> list1, List<Contact> list2) {
+        List<Contact> newList = new ArrayList<>(list1);
+        newList.retainAll(list2);
+        return newList;
+    }
 
-        assert books.length > 0 : "Expecting at least 1 AddressBook";
+    public static List<Contact> commonContacts(@NonNull Collection<AddressBook> books) {
 
-        if (books.length == 1) {
-            return books[0].getContacts();
+        assert books.size() > 0 : "Expecting at least 1 AddressBook";
+
+        if (books.size() == 1) {
+            return books.stream().findFirst().get().getContacts();
         }
 
-        return Stream.of(books).parallel()
+        return books.parallelStream()
             .map(AddressBook::getContacts)
-            .reduce((list1, list2) -> {
-                List<Contact> newList = new ArrayList<>(list1);
-                newList.retainAll(list2);
-                return newList;
-            })
+            .reduce(ContactUtil::intersection)
             .get();
     }
 }
