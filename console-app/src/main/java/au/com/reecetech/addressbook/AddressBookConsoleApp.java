@@ -6,6 +6,7 @@ import au.com.reecetech.addressbook.models.Phone;
 import au.com.reecetech.addressbook.models.User;
 import au.com.reecetech.addressbook.store.IUserStorage;
 import au.com.reecetech.addressbook.store.MemoryStorage;
+import au.com.reecetech.addressbook.util.ContactUtil;
 import com.budhash.cliche.Command;
 import com.budhash.cliche.Shell;
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -13,6 +14,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -38,8 +40,8 @@ public class AddressBookConsoleApp {
         return format("User '%s' was created and selected", username);
     }
 
-    @Command(description = "Create new address book, usage: ab [addressBookName]")
-    public String addressBook(String bookName) {
+    @Command(description = "Create new address book, usage: book [addressBookName]")
+    public String book(String bookName) {
         if (this.user == null) {
             return "Please create a user first";
         }
@@ -81,35 +83,99 @@ public class AddressBookConsoleApp {
             return "Please create a user first";
         }
 
-        List<Contact> list = this.user.findContactByName(name);
+        List<Contact> list = this.user.findContactByName(name, true);
 
         if (list.size() == 0) {
             return format("Found 0 contact with name '%s'", name);
+        } else if (list.size() == 1) {
+            Contact contact = list.get(0);
+            this.user.addContactToAddressBook(contact, bookName);
+            return format("Contact '%s' has been added to address book '%s'", name, bookName);
         }
-        Contact contact = list.get(0);
-        this.user.addContactToAddressBook(contact, bookName);
-        return format("Contact '%s' has been added to address book '%s'", name, bookName);
+
+        return chooseContact(list, bookName);
     }
 
-    @Command(description = "List all contacts")
-    public String listContact() {
+    @Command(description = "List entities in the memory. Usage: list contact, list book, list contact [bookName], list contact unique")
+    public String list(String... args) {
+        String entity = args[0];
+        switch (entity.toLowerCase()) {
+            case "book":
+            case "addressbook":
+                return listBook();
+            case "contact":
+                if (args.length > 1) {
+                    if (args[1].equalsIgnoreCase("unique")) {
+                        return listCommonContacts();
+                    } else if (args[1].equalsIgnoreCase("duplicate")) {
+                        return listDuplicateContacts();
+                    }
+                    return listContactInBook(args[1]);
+                }
+                return listContact();
+        }
+        return "Usage: \n" +
+        "\tlist contact               List all contacts\n" +
+        "\tlist book|addressbook      List all address books\n" +
+        "\n" +
+        "\tlist contact [bookName]    List all contacts in address book [bookName]\n" +
+        "\tlist contact unique        List all unique contacts in all address books\n" +
+        "\tlist contact duplicate     List all potential duplicate contacts\n";
+    }
+
+    private String printContact(Contact contact) {
+        return format("%s (%s)", contact.getName(),
+        contact.getPhones().stream().map(Phone::toString).collect(Collectors.joining(", ")));
+    }
+
+    private String chooseContact(List<Contact> list, String bookName) {
+        int i = 0;
+        Scanner scan = new Scanner(System.in);
+        do {
+            System.out.println("Please choose a contact (type the number): ");
+            for (i = 0; i < list.size(); i++) {
+                System.out.println(format("%d. %s", i + 1, printContact(list.get(i))));
+            }
+            System.out.println(format("%d. All", i + 1));
+            System.out.println(format("%d. Cancel", i + 2));
+            System.out.print("Your choice: ");
+            try {
+                int choice = scan.nextInt();
+                if (choice > 0 && choice <= list.size()) {
+                    Contact contact = list.get(choice - 1);
+                    this.user.addContactToAddressBook(contact, bookName);
+                    return format("Contact '%s' has been added to address book '%s'", printContact(contact), bookName);
+                } else if (choice == list.size() + 1) {
+                    for (i = 0; i < list.size(); i++) {
+                        this.user.addContactToAddressBook(list.get(i), bookName);
+                    }
+                    return format("All matched contacts has been added to '%s'", bookName);
+                } else if (choice == list.size() + 2) {
+                    return "Cancel";
+                }
+            } catch (Exception e) {
+                System.out.println("!!! Wrong choice !!!");
+                String s = scan.next(); // clear input
+            }
+        } while (true);
+    }
+
+    private String listContact() {
         if (this.user == null) {
             return "Please create a user first";
         }
 
-        List<Contact> contacts = this.user.getAllContacts();
+        List<Contact> contacts = this.user.getContacts();
         Iterator<Contact> iter = contacts.iterator();
         int count = 0;
         while (iter.hasNext()) {
             Contact contact = iter.next();
-            System.out.println(format("%d. %s - %s", ++count, contact.getName(),
-                contact.getPhones().stream().map(Phone::toString).collect(Collectors.joining(", "))));
+            System.out.println(format("%d. %s", ++count, printContact(contact)));
         }
         return "";
     }
 
-    @Command(description = "List all address books")
-    public String listBook() {
+    private String listBook() {
         if (this.user == null) {
             return "Please create a user first";
         }
@@ -123,24 +189,25 @@ public class AddressBookConsoleApp {
         return "";
     }
 
-    @Command(description = "List all contacts in address books")
-    public String listContactInBook(String bookname) {
+    private String listContactInBook(String bookname) {
         if (this.user == null) {
             return "Please create a user first";
         }
 
         AddressBook book = this.user.getAddressBook(bookname);
+        if (book == null) {
+            return format("Cannot find address book name '%s'", bookname);
+        }
         List<Contact> contacts = book.getContacts();
         Iterator<Contact> iter = contacts.iterator();
         int count = 0;
         while (iter.hasNext()) {
-            System.out.println(format("%d. %s", ++count, iter.next().getName()));
+            System.out.println(format("%d. %s", ++count, printContact(iter.next())));
         }
         return "";
     }
 
-    @Command(description = "List common contacts in all address books")
-    public String listCommonContact() {
+    private String listCommonContacts() {
         if (this.user == null) {
             return "Please create a user first";
         }
@@ -149,7 +216,20 @@ public class AddressBookConsoleApp {
         Iterator<Contact> iter = contacts.iterator();
         int count = 0;
         while (iter.hasNext()) {
-            System.out.println(format("%d. %s", ++count, iter.next().getName()));
+            System.out.println(format("%d. %s", ++count, printContact(iter.next())));
+        }
+        return "";
+    }
+
+    private String listDuplicateContacts() {
+        if (this.user == null) {
+            return "Please create a user first";
+        }
+        List<Contact> contacts = ContactUtil.potentialDuplicates(user.getContacts());
+        Iterator<Contact> iter = contacts.iterator();
+        int count = 0;
+        while (iter.hasNext()) {
+            System.out.println(format("%d. %s", ++count, printContact(iter.next())));
         }
         return "";
     }

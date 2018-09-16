@@ -6,6 +6,7 @@ import au.com.reecetech.addressbook.util.ContactUtil;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Delegate;
 import net.sf.oval.constraint.MinLength;
 import net.sf.oval.constraint.NotEmpty;
 
@@ -19,6 +20,17 @@ public class User {
     @Getter @Setter private String username;
 
     // we maintain a default address book to store all user's contacts
+    // we use Lombok to generate all public methos of default address book to this user object
+    // Decorator pattern
+    private interface DelegateExcludes {
+        void setName(String name);
+        void setContacts(List<Contact> contacts);
+        void removeContact(Contact contact);
+        List<Contact> intersectionContacts(AddressBook other);
+        void mergeContacts(AddressBook other);
+    }
+
+    @Delegate(excludes = DelegateExcludes.class)
     private AddressBook defaultBook;
 
     private Map<String, AddressBook> addressBooks;
@@ -47,30 +59,10 @@ public class User {
         return newContact;
     }
 
-    public void addContact(Contact contact) {
-        this.defaultBook.addContact(contact);
-    }
-
     public void removeContact(Contact contact) {
         this.defaultBook.removeContact(contact);
         this.addressBooks.values().stream()
             .forEach(addressBook -> addressBook.removeContact(contact));
-    }
-
-    public boolean hasContact(Contact contact) {
-        return this.defaultBook.hasContact(contact);
-    }
-
-    public List<Contact> findContactByName(String name) {
-        return this.defaultBook.findContactByName(name);
-    }
-
-    public List<Contact> findContactByName(String name, boolean lenient) {
-        return this.defaultBook.findContactByName(name, lenient);
-    }
-
-    public List<Contact> getAllContacts() {
-        return this.defaultBook.getContacts();
     }
 
     /**

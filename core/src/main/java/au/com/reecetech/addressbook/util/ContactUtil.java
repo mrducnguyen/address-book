@@ -19,22 +19,20 @@ public class ContactUtil {
         //     -- excluding itself
         //     -- excluding all found duplicates
         List<Contact> duplicates = new ArrayList<>();
-        contacts.stream()
-        .forEach(contact -> {
-            long dupCount = contacts.stream()
-                // filter itself out
-                .filter(otherContact -> !contact.equals(otherContact) && !duplicates.contains(otherContact))
-                // filter all the ones which are in duplicates already
-                .filter(contact::isPotentialDuplicate)
-                .map(duplicateContact -> duplicates.add(duplicateContact))
-                .count();
 
-            if (dupCount > 0) {
-                // add the current contact to the duplicate list
-                // along with all the other duplicates
-                duplicates.add(contact);
+        for (int i = 0; i < contacts.size() - 1; i++) {
+            int count = 0;
+            for (int j = i + 1; j < contacts.size(); j++) {
+                if (contacts.get(i).isPotentialDuplicate(contacts.get(j)) && !duplicates.contains(contacts.get(j))) {
+                    duplicates.add(contacts.get(j));
+                    ++count;
+                }
             }
-        });
+            if (count > 0 && !duplicates.contains(contacts.get(i))) {
+                duplicates.add(contacts.get(i));
+            }
+        }
+
         return duplicates;
     }
 

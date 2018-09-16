@@ -61,7 +61,10 @@ public class AddressBook {
     }
 
     public void mergeContacts(AddressBook other) {
-        this.contacts = Stream.concat(this.contacts.stream(), other.getContacts().stream())
-            .collect(Collectors.toList());
+        this.mergeContacts(other.getContacts());
+    }
+
+    public void mergeContacts(List<Contact> contacts) {
+        this.contacts.addAll(contacts);
     }
 }
