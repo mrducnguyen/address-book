@@ -1,4 +1,12 @@
+apply plugin: 'application'
+mainClassName = 'au.com.reecetech.addressbook.Main'
+
 dependencies {
     compile project(':core')
     compile 'com.budhash.cliche:cliche-shell:0.9.3'
+}
+
+run {
+    standardInput = System.in
+    standardOutput = System.out
 }
