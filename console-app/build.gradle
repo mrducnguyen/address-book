@@ -7,7 +7,6 @@ dependencies {
 }
 
 run {
-    environment("TERM", "dump") // to remove the progress bar
     standardInput = System.in
     standardOutput = System.out
 }
